@@ -1,0 +1,16 @@
+Exibir os loggroups e a retenção atual (Quando não há política de retenção, o campo Retention retorna como null:
+aws logs describe-log-groups --profile ${PROFILE} --region ${REGION} --output json --query 'logGroups[*].{Name:logGroupName,Retention:retentionInDays}'
+
+
+Exibir os loggroups em formato texto, exibindo somente o nome do loggroup:
+
+aws logs describe-log-groups --profile ${PROFILE} --region ${REGION} --output text --query 'logGroups[*].{Name:logGroupName}'
+
+
+OBS: por conta da paginação obrigatória, contas com listas muito grandes devem ser salvas manualmente em um arquivo de texto.
+
+
+
+Aplicar a retenção em todos os loggroups do arquivo de texto:
+
+for i in $(cat loggroups_${PROFILE}.txt); do aws logs put-retention-policy --log-group-name $i --retention-in-days 180 --profile ${PROFILE} --region ${REGION} ; done

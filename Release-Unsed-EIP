@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    stages {
+            stage('Release Unused ElasticIP'){
+                steps{
+                    sh '''
+                        for AllocationId in $(aws ec2 describe-addresses --query 'Addresses[?AssociationId==""].{PublicIp:PublicIp,AllocationId:AllocationId,Name:Tags[0].Value}' --profile $PROFILE --region us-east-1 | grep AllocationId | cut -d'"' -f4); do aws ec2 release-address --allocation-id $AllocationId --profile $PROFILE --region us-east-1;done
+                    '''
+                }
+            }
+  }//End Stages
+}//End Pipeline
